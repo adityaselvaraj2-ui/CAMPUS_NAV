@@ -65,7 +65,7 @@ export default function LoginPage({ onLogin, onClose }: LoginPageProps) {
     setLoading(true);
     
     try {
-      const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const API = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${API}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,7 +96,7 @@ export default function LoginPage({ onLogin, onClose }: LoginPageProps) {
     setLoading(true);
     
     try {
-      const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const API = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${API}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -126,7 +126,7 @@ export default function LoginPage({ onLogin, onClose }: LoginPageProps) {
     setGoogleLoading(true);
     
     try {
-      const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const API = import.meta.env.VITE_API_URL || '';
       const response = await fetch(`${API}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
