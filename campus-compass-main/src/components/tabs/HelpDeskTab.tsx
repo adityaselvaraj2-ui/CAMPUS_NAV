@@ -267,7 +267,8 @@ ${buildingList}`;
         body: JSON.stringify({
           message: userMessage,
           campus: campus,
-          campusContext: campusContext   // <-- pass full campus knowledge
+          campusContext: campusContext,   // <-- pass full campus knowledge
+          conversationHistory: conversationHistory  // <-- pass conversation history for context
         })
       });
 
@@ -292,6 +293,9 @@ ${buildingList}`;
     const msg = text || input.trim();
     if (!msg || isLoading) return;
 
+    // Check if this is the first message (after welcome)
+    const isFirstUserMessage = messages.length === 1; // Only welcome message exists
+
     const userMsg: Message = { from: 'user', text: msg };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
@@ -302,11 +306,11 @@ ${buildingList}`;
 
     try {
       let botResponse: string;
-
+      
       if (useGroq) {
-        // Use Groq API with backstops
+        // Use Groq API with conversation history for intelligent responses
         try {
-          botResponse = await sendToGroqAPI(msg, [...messages, userMsg]);
+          botResponse = await sendToGroqAPI(msg, messages);
         } catch (groqError) {
           console.warn('Groq API failed, falling back to FAQ:', groqError);
           botResponse = matchQuery(msg, campus);
@@ -316,6 +320,7 @@ ${buildingList}`;
         botResponse = matchQuery(msg, campus);
       }
 
+      // Remove loading message and add bot response placeholder
       setMessages(prev => {
         // Remove loading message and add bot response placeholder
         return [
