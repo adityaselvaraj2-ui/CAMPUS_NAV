@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+server/node_modules/
+campus-compass-main/node_modules/
+
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.production
+server/.env
+campus-compass-main/.env
+
+# Build output
+dist/
+build/
+campus-compass-main/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
