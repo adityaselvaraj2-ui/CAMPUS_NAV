@@ -20,9 +20,41 @@ export default function App() {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (token) {
-      // TODO: Validate token with backend and get user info
-      // For now, we'll just set a minimal user state
-      setUser({ id: token, email: 'user@example.com' });
+      // Validate token with backend and get user info
+      const validateToken = async () => {
+        try {
+          const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+          const response = await fetch(`${API}/api/auth/validate`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+              setUser({
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.name,
+                picture: data.user.picture,
+                campus: data.user.campus
+              });
+            } else {
+              localStorage.removeItem('authToken');
+            }
+          } else {
+            localStorage.removeItem('authToken');
+          }
+        } catch (error) {
+          console.error('Token validation failed:', error);
+          localStorage.removeItem('authToken');
+        }
+      };
+      
+      validateToken();
     }
   }, []);
 

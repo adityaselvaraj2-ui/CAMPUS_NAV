@@ -164,6 +164,38 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// VALIDATE TOKEN — validate JWT and return user info
+app.post('/api/auth/validate', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'No token provided.' });
+  }
+
+  const token = authHeader.substring(7);
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'User not found.' });
+    }
+
+    res.json({ 
+      success: true, 
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        campus: user.campus
+      }
+    });
+  } catch (error) {
+    console.error('Token validation error:', error);
+    res.status(401).json({ success: false, message: 'Invalid token.' });
+  }
+});
+
 // GOOGLE OAUTH — handles Google sign-in
 app.post('/api/auth/google', async (req, res) => {
   const { token } = req.body;
